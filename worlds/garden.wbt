@@ -1,0 +1,37 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/vehicles/protos/lincoln/LincolnMKZ.proto"
+
+WorldInfo {
+  basicTimeStep 8
+}
+Viewpoint {
+  orientation 0.20521681569096495 0.12933112694824164 -0.9701337630244389 2.0438659319536017
+  position 35.470804520355266 81.68193095310036 36.46765361858506
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0 0 -0.7
+  floorSize 100 100
+}
+LincolnMKZ {
+  hidden position_0_0 1.4670131776028938e-10
+  hidden position2_0_0 -216.84328803081584
+  hidden position_0_1 1.4126055880581134e-10
+  hidden position2_0_1 -223.20746447465572
+  hidden position_0_2 -217.3717768450967
+  hidden position_0_3 -223.11331883853387
+  hidden rotation_1 7.335065888014469e-11 1 2.6929923478624756e-12 3.2149875867099014
+  hidden rotation_2 7.063027940290566e-11 0.9999999999999999 -5.463020887140633e-12 2.9872065838093906
+  hidden rotation_3 0 0.9999999999999999 0 3.74347640099075
+  hidden rotation_4 0 1 0 3.081352219931242
+  translation 11.7709712693098 17.550537102457017 -0.4918182189457607
+  rotation -0.002525425139279955 -0.002733579634704036 0.9999930748611444 -1.491775817751316
+  controller "meu_carro_rc_cpp"
+}
