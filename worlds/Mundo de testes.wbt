@@ -4,12 +4,14 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/Floor.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/robots/gctronic/e-puck/protos/E-puck.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/factory/containers/protos/PlasticCrate.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/apartment_structure/protos/Wall.proto"
 
 WorldInfo {
 }
 Viewpoint {
   orientation -0.2554065675949081 -0.31306089922713937 0.914746062360742 4.826583422247475
-  position -0.09022244773575173 0.32403440386994564 0.22826502953647648
+  position -0.7872256317109195 3.724684493486731 2.33061664339913
 }
 TexturedBackground {
 }
@@ -18,17 +20,22 @@ TexturedBackgroundLight {
 Floor {
   size 100 100
 }
+Wall {
+  translation 0 -1.54 0
+  rotation 0 0 1 -1.5707953071795862
+}
+PlasticCrate {
+  translation 0.74 0 0
+  name "plastic crate(1)"
+}
 E-puck {
   hidden position_0_0 -8.428279832306608e-15
   hidden position_0_1 6.121438466514503e-08
-  hidden linearVelocity_0 5.733071238226533e-27 -7.0992749779049205e-16 1.8000415972589206e-15
-  hidden angularVelocity_0 -7.487823707216065e-14 3.7827436778414964e-25 4.192543533154954e-24
-  hidden linearVelocity_1 -1.0138575595108917e-25 -6.862461359016518e-16 -1.5543129136098489e-15
-  hidden angularVelocity_1 2.039185147123419e-13 -5.120262771145924e-24 4.192541278242312e-24
   hidden rotation_2 0 1 0 5.960464477539063e-08
-  hidden linearVelocity_2 1.1663452192339628e-25 3.850204686650521e-17 -1.3322712338147517e-16
-  hidden angularVelocity_2 -2.718913530254206e-14 5.8831464133153764e-24 4.192541777838184e-24
   translation 1.618017860489255e-18 -1.7089968608844762e-13 -6.396199578855011e-05
   rotation 1 1.0963517653160297e-11 5.88220046327309e-09 4.889590785396391e-09
   controller "car_controller"
+}
+PlasticCrate {
+  translation 0.74 0 0
 }
