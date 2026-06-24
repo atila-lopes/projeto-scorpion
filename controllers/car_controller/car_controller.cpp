@@ -10,6 +10,8 @@
 #include <fstream>
 #include <string>
 
+#include <webots/DistanceSensor.hpp>
+
 using namespace webots;
 
 int main() {
@@ -42,6 +44,17 @@ int main() {
   // Inicializa o robô parado
   leftMotor->setVelocity(0.0);
   rightMotor->setVelocity(0.0);
+  
+  DistanceSensor *ps[8];
+  
+  char sensorNames[8][4] = {
+    "ps0", "ps1", "ps2", "ps3", "ps4", "ps5", "ps6", "ps7"
+  };
+  
+  for (int i = 0; i < 8; i++){
+    ps[i] = robot.getDistanceSensor(sensorNames[i]);
+    ps[i]->enable(timestep);
+  }
 
   // Exibe o diretório atual para auxiliar na depuração
   std::cout
@@ -56,6 +69,31 @@ int main() {
       "../../worlds/command.txt"
     );
 
+  double value[8];
+  
+  for (int i = 0; i < 8; i++)
+    value[i] = ps[i]->getValue();
+  
+  const double LIMIT = 80.0;
+  
+  bool frontBlocked =
+    value[0] > LIMIT ||
+    value[1] > LIMIT ||
+    value[6] > LIMIT ||
+    value[7] > LIMIT;
+  
+  bool leftBlocked =
+    value[5] > LIMIT ||
+    value[6] > LIMIT;
+
+  bool rightBlocked =
+    value[1] > LIMIT ||
+    value[2] > LIMIT;
+
+  bool rearBlocked =
+    value[3] > LIMIT ||
+    value[4] > LIMIT;
+  
     // Verifica se o arquivo foi aberto corretamente
     if (file) {
       std::cout << "Arquivo aberto!" << std::endl;
@@ -75,30 +113,51 @@ int main() {
 
     // Movimento para frente
     if (cmd == "F") {
-
-      leftMotor->setVelocity(6.0);
-      rightMotor->setVelocity(6.0);
+      
+      if (!frontBlocked) {
+        leftMotor->setVelocity(6.0);
+        rightMotor->setVelocity(6.0);
+      } else {
+        leftMotor->setVelocity(0.0);
+        rightMotor->setVelocity(0.0);
+      }
 
     }
     // Movimento para trás
     else if (cmd == "B") {
-
-      leftMotor->setVelocity(-6.0);
-      rightMotor->setVelocity(-6.0);
+      if (!rearBlocked) {
+        leftMotor->setVelocity(-6.0);
+        rightMotor->setVelocity(-6.0);
+      } else {
+        leftMotor->setVelocity(0.0);
+        rightMotor->setVelocity(0.0);
+      }
 
     }
     // Rotação para a esquerda
     else if (cmd == "L") {
 
-      leftMotor->setVelocity(-3.0);
-      rightMotor->setVelocity(3.0);
+      if (!leftBlocked) {
+        leftMotor->setVelocity(-3.0);
+        rightMotor->setVelocity(3.0);
+      } else {
+        leftMotor->setVelocity(0.0);
+        rightMotor->setVelocity(0.0);
+      }
+
 
     }
     // Rotação para a direita
     else if (cmd == "R") {
 
-      leftMotor->setVelocity(3.0);
-      rightMotor->setVelocity(-3.0);
+      if (!rightBlocked) {
+        leftMotor->setVelocity(3.0);
+        rightMotor->setVelocity(-3.0);
+      } else {
+        leftMotor->setVelocity(0.0);
+        rightMotor->setVelocity(0.0);
+      }
+
 
     }
     // Qualquer outro comando mantém o robô parado
