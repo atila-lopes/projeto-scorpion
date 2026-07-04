@@ -140,7 +140,7 @@ Para executar o projeto são necessários:
 ### Clonar o repositório
 
 ```bash
-git clone https://github.com/atila-lopes/webots-project.git
+git clone https://github.com/atila-lopes/projeto-scorpion.git
 ```
 
 ### Acessar o diretório
