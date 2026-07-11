@@ -10,50 +10,64 @@ const speedValue = document.getElementById("speedValue");
 const plus = document.getElementById("plus");
 const minus = document.getElementById("minus");
 
-let dragging = false;
 let speed = 100;
 
-// -------------------------
-// Controle de velocidade
-// -------------------------
+const JOYSTICK_SIZE = 250;
+const STICK_SIZE = 80;
 
-plus.addEventListener("click", () => {
+const CENTER = JOYSTICK_SIZE / 2;
+const STICK_RADIUS = STICK_SIZE / 2;
+
+// raio útil do joystick
+const MAX_RADIUS = CENTER - STICK_RADIUS;
+
+let pointerId = null;
+
+
+
+//--------------------------------------
+// Velocidade
+//--------------------------------------
+
+plus.onclick = () => {
 
     speed = Math.min(100, speed + 10);
 
-    speedValue.innerHTML = speed + "%";
+    speedValue.textContent = speed + "%";
 
-});
+};
 
-minus.addEventListener("click", () => {
+minus.onclick = () => {
 
     speed = Math.max(0, speed - 10);
 
-    speedValue.innerHTML = speed + "%";
+    speedValue.textContent = speed + "%";
 
-});
+};
 
-// -------------------------
-// Envia comando ao servidor
-// -------------------------
 
-async function sendCommand(x, y, speed) {
 
-    try {
+//--------------------------------------
+// Comunicação
+//--------------------------------------
 
-        await fetch("/command", {
+async function sendCommand(x, y, speed){
 
-            method: "POST",
+    try{
 
-            headers: {
-                "Content-Type": "application/json"
+        await fetch("/command",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
             },
 
-            body: JSON.stringify({
+            body:JSON.stringify({
 
-                x: x,
-                y: y,
-                speed: speed
+                x:x,
+                y:y,
+                speed:speed
 
             })
 
@@ -61,7 +75,7 @@ async function sendCommand(x, y, speed) {
 
     }
 
-    catch (e) {
+    catch(e){
 
         console.log(e);
 
@@ -69,155 +83,136 @@ async function sendCommand(x, y, speed) {
 
 }
 
-// -------------------------
+
+
+//--------------------------------------
 // Eventos
-// -------------------------
+//--------------------------------------
 
-joystick.addEventListener(
-    "pointerdown",
-    startDrag
-);
+joystick.addEventListener("pointerdown",startDrag);
 
-document.addEventListener(
-    "pointermove",
-    moveStick
-);
+document.addEventListener("pointermove",moveDrag);
 
-document.addEventListener(
-    "pointerup",
-    stopDrag
-);
+document.addEventListener("pointerup",stopDrag);
 
-// -------------------------
 
-function startDrag(e) {
 
-    dragging = true;
+//--------------------------------------
 
-    moveStick(e);
+function startDrag(e){
+
+    pointerId = e.pointerId;
+
+    joystick.setPointerCapture(pointerId);
+
+    updateJoystick(e);
 
 }
 
-// -------------------------
 
-function stopDrag() {
 
-    dragging = false;
+//--------------------------------------
 
-    stick.style.left = "85px";
-    stick.style.top = "85px";
+function moveDrag(e){
 
-    xValue.innerHTML = "0.00";
-    yValue.innerHTML = "0.00";
-
-    lastCommand.innerHTML = "Parado";
-
-    sendCommand(0, 0, 0);
-
-}
-
-// -------------------------
-
-function moveStick(e) {
-
-    if (!dragging)
+    if(e.pointerId != pointerId)
         return;
+
+    updateJoystick(e);
+
+}
+
+
+
+//--------------------------------------
+
+function stopDrag(e){
+
+    if(e.pointerId != pointerId)
+        return;
+
+    pointerId = null;
+
+    stick.style.left =
+        (CENTER-STICK_RADIUS)+"px";
+
+    stick.style.top =
+        (CENTER-STICK_RADIUS)+"px";
+
+    xValue.textContent="0.00";
+    yValue.textContent="0.00";
+
+    lastCommand.textContent="Parado";
+
+    sendCommand(0,0,0);
+
+}
+
+
+
+//--------------------------------------
+
+function updateJoystick(e){
 
     const rect =
         joystick.getBoundingClientRect();
 
-    let x =
-        e.clientX - rect.left;
+    let dx =
+        e.clientX -
+        rect.left -
+        CENTER;
 
-    let y =
-        e.clientY - rect.top;
+    let dy =
+        e.clientY -
+        rect.top -
+        CENTER;
 
-    // Centraliza considerando que o stick possui 80 px
+    const distance =
+        Math.sqrt(dx*dx + dy*dy);
 
-    x -= 40;
-    y -= 40;
-
-    //--------------------------------------------------
-    // Limitação CIRCULAR do joystick
-    //--------------------------------------------------
-
-    const center = 85;
-
-    const radius = 85;
-
-    let dx = x - center;
-
-    let dy = y - center;
-
-    let distance =
-        Math.sqrt(dx * dx + dy * dy);
-
-    if (distance > radius) {
+    if(distance > MAX_RADIUS){
 
         dx =
-            dx / distance * radius;
+            dx/distance*MAX_RADIUS;
 
         dy =
-            dy / distance * radius;
+            dy/distance*MAX_RADIUS;
 
     }
 
-    x = center + dx;
-
-    y = center + dy;
-
-    //--------------------------------------------------
-
     stick.style.left =
-        x + "px";
+        (CENTER + dx - STICK_RADIUS)+"px";
 
     stick.style.top =
-        y + "px";
-
-    //--------------------------------------------------
-    // Converte para intervalo [-1,1]
-    //--------------------------------------------------
+        (CENTER + dy - STICK_RADIUS)+"px";
 
     let nx =
-        dx / radius;
+        dx/MAX_RADIUS;
 
     let ny =
-        -dy / radius;
+        -dy/MAX_RADIUS;
 
-    xValue.innerHTML =
+    xValue.textContent =
         nx.toFixed(2);
 
-    yValue.innerHTML =
+    yValue.textContent =
         ny.toFixed(2);
 
-    //--------------------------------------------------
-    // Intensidade
-    //--------------------------------------------------
-
     let intensity =
-        Math.sqrt(
-            nx * nx +
-            ny * ny
-        );
-
-    intensity =
         Math.min(
-            intensity,
+            Math.sqrt(nx*nx+ny*ny),
             1
         );
 
     let currentSpeed =
         Math.round(
-            speed *
-            intensity
+            intensity*speed
         );
 
-    //--------------------------------------------------
-
-    lastCommand.innerHTML =
-        "X: " +
-        nx.toFixed(2) +
-        " | Y: " +
+    lastCommand.textContent =
+        "X: "+
+        nx.toFixed(2)+
+        "  Y: "+
         ny.toFixed(2);
 
     sendCommand(
