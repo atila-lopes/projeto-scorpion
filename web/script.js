@@ -51,12 +51,17 @@ async function sendCommand(cmd) {
             },
 
             body: JSON.stringify({
-                command: cmd
+
+                command: cmd,
+
+                speed: speed
+
             })
 
         });
 
-    } catch (e) {
+    }
+    catch(e){
 
         console.log(e);
 
