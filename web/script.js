@@ -1,66 +1,79 @@
-const joystick = document.getElementById("joystick");
-const stick = document.getElementById("stick");
+const joystick =
+document.getElementById("joystick");
 
-const xValue = document.getElementById("xValue");
-const yValue = document.getElementById("yValue");
+const stick =
+document.getElementById("stick");
 
-const lastCommand = document.getElementById("lastCommand");
+const xValue =
+document.getElementById("xValue");
 
-const speedValue = document.getElementById("speedValue");
-const plus = document.getElementById("plus");
-const minus = document.getElementById("minus");
+const yValue =
+document.getElementById("yValue");
+
+const lastCommand =
+document.getElementById("lastCommand");
+
+const speedValue =
+document.getElementById("speedValue");
+
+const plus =
+document.getElementById("plus");
+
+const minus =
+document.getElementById("minus");
 
 let dragging = false;
 
 let speed = 100;
 
-// -------------------------
-// Controle de velocidade
-// -------------------------
 
-plus.addEventListener("click", () => {
 
-    speed = Math.min(100, speed + 10);
+plus.addEventListener("click",()=>{
 
-    speedValue.innerHTML = speed + "%";
+    speed=Math.min(100,speed+10);
+
+    speedValue.innerHTML=speed+"%";
 
 });
 
-minus.addEventListener("click", () => {
 
-    speed = Math.max(0, speed - 10);
 
-    speedValue.innerHTML = speed + "%";
+minus.addEventListener("click",()=>{
+
+    speed=Math.max(0,speed-10);
+
+    speedValue.innerHTML=speed+"%";
 
 });
 
-// -------------------------
-// Envio de comandos
-// -------------------------
 
-async function sendCommand(cmd,  currentSpeed) {
 
-    try {
+async function sendCommand(x,y,speed){
 
-        await fetch("/command", {
+    try{
 
-            method: "POST",
+        await fetch("/command",{
 
-            headers: {
-                "Content-Type": "application/json"
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
             },
 
-            body: JSON.stringify({
+            body:JSON.stringify({
 
-                command: cmd,
+                x:x,
 
-                speed: currentSpeed
+                y:y,
+
+                speed:speed
 
             })
 
         });
 
     }
+
     catch(e){
 
         console.log(e);
@@ -69,132 +82,123 @@ async function sendCommand(cmd,  currentSpeed) {
 
 }
 
-// -------------------------
-// Eventos do joystick
-// -------------------------
 
-joystick.addEventListener("pointerdown", startDrag);
 
-document.addEventListener("pointermove", moveStick);
+joystick.addEventListener(
+    "pointerdown",
+    startDrag
+);
 
-document.addEventListener("pointerup", stopDrag);
+document.addEventListener(
+    "pointermove",
+    moveStick
+);
 
-function startDrag(e) {
+document.addEventListener(
+    "pointerup",
+    stopDrag
+);
 
-    dragging = true;
+
+
+function startDrag(e){
+
+    dragging=true;
 
     moveStick(e);
 
 }
 
-function stopDrag() {
 
-    dragging = false;
 
-    // Centraliza novamente o analógico
+function stopDrag(){
 
-    stick.style.left = "100px";
-    stick.style.top = "100px";
+    dragging=false;
 
-    xValue.innerHTML = "0.00";
-    yValue.innerHTML = "0.00";
+    stick.style.left="100px";
+    stick.style.top="100px";
 
-    lastCommand.innerHTML = "Parado";
+    xValue.innerHTML="0.00";
+    yValue.innerHTML="0.00";
 
-    sendCommand("S", 0);
+    lastCommand.innerHTML="Parado";
+
+    sendCommand(0,0,0);
 
 }
 
-function moveStick(e) {
 
-    if (!dragging)
+
+function moveStick(e){
+
+    if(!dragging)
         return;
 
-    const rect = joystick.getBoundingClientRect();
+    const rect=
+        joystick.getBoundingClientRect();
 
-    let x = e.clientX - rect.left;
+    let x=
+        e.clientX-rect.left;
 
-    let y = e.clientY - rect.top;
+    let y=
+        e.clientY-rect.top;
 
-    // Centraliza o cursor
+    x-=40;
+    y-=40;
 
-    x -= 40;
-    y -= 40;
+    x=Math.max(
+        0,
+        Math.min(200,x)
+    );
 
-    // Limites do joystick
+    y=Math.max(
+        0,
+        Math.min(200,y)
+    );
 
-    x = Math.max(0, Math.min(x, 200));
-    y = Math.max(0, Math.min(y, 200));
+    stick.style.left=x+"px";
+    stick.style.top=y+"px";
 
-    // Move o analógico
+    let nx=
+        (x-100)/100;
 
-    stick.style.left = x + "px";
-    stick.style.top = y + "px";
+    let ny=
+        -(y-100)/100;
 
-    // Converte para intervalo [-1,1]
+    xValue.innerHTML=
+        nx.toFixed(2);
 
-    let nx = (x - 100) / 100;
+    yValue.innerHTML=
+        ny.toFixed(2);
 
-    let ny = -(y - 100) / 100;
+    let intensity=
+        Math.sqrt(
+            nx*nx+
+            ny*ny
+        );
 
-    xValue.innerHTML = nx.toFixed(2);
+    intensity=
+        Math.min(
+            intensity,
+            1
+        );
 
-    yValue.innerHTML = ny.toFixed(2);
+    let currentSpeed=
+        Math.round(
+            speed*
+            intensity
+        );
 
-    let cmd = "S";
+    lastCommand.innerHTML=
+        "X: "+
+        nx.toFixed(2)+
+        " | Y: "+
+        ny.toFixed(2);
 
-    let intensity = Math.sqrt(nx * nx + ny * ny);
-
-    intensity = Math.min(intensity, 1.0);
-
-    let currentSpeed =
-        Math.round(speed * intensity);
-
-    if (ny > 0.2) {
-
-        cmd = "F";
-
-    }
-    else if (ny < -0.2) {
-
-        cmd = "B";
-
-    }
-    else if (nx > 0.2) {
-
-        cmd = "R";
-
-    }
-    else if (nx < -0.2) {
-
-        cmd = "L";
-
-    }
-
-    switch (cmd) {
-
-        case "F":
-            lastCommand.innerHTML = "Frente";
-            break;
-
-        case "B":
-            lastCommand.innerHTML = "Ré";
-            break;
-
-        case "L":
-            lastCommand.innerHTML = "Esquerda";
-            break;
-
-        case "R":
-            lastCommand.innerHTML = "Direita";
-            break;
-
-        default:
-            lastCommand.innerHTML = "Parado";
-            break;
-
-    }
-
-    sendCommand(cmd, currentSpeed);
+    sendCommand(
+        nx,
+        ny,
+        currentSpeed
+    );
 
 }

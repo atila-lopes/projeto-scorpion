@@ -28,31 +28,22 @@ def style():
 	return send_from_directory(".", "style.css")
 
 
-# Rota responsável por receber comandos do navegador
 @app.route("/command", methods=["POST"])
 def command():
 
-    # Obtém o JSON enviado pela interface Web
     data = request.get_json()
 
-    # Extrai o comando recebido
-    cmd = data["command"]
+    x = data["x"]
+
+    y = data["y"]
+
     speed = data["speed"]
 
-    # Salva o comando em um arquivo texto
-    # Esse arquivo será lido continuamente pelo controlador do Webots
-    with open(
-        "../worlds/command.txt",
-        "w"
-    ) as f:
+    with open("../worlds/command.txt","w") as f:
 
-        f.write(f"{cmd} {speed}")
+        f.write(f"{x} {y} {speed}")
 
-    # Exibe o comando recebido no terminal
-    print("Comando recebido:", cmd)
-
-    # Retorna uma resposta indicando sucesso
-    return {"status": "ok"}
+    return {"status":"ok"}
 
 # Inicializa o servidor Web
 app.run(
