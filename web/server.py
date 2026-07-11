@@ -23,6 +23,11 @@ def script():
 
     return send_from_directory(".", "script.js")
 
+@app.route("/style.css")
+def style():
+	return send_from_directory(".", "style.css")
+
+
 # Rota responsável por receber comandos do navegador
 @app.route("/command", methods=["POST"])
 def command():
