@@ -1,62 +1,86 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="pt-BR">
 
 <head>
-	<meta charset="utf-8">
-	<title>Controle do E-Puck</title>
-	<link rel="stylesheet" href="style.css">
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Scorpion Control</title>
+
+<link
+rel="stylesheet"
+href="style.css">
+
 </head>
 
 <body>
 
 <div id="container">
 
-    <h1>Controle do E-Puck</h1>
+<h1>SCORPION CONTROL</h1>
 
-    <div id="mainPanel">
+<div id="main">
 
-        <div id="leftPanel">
+<div id="left">
 
-            <div id="joystick">
-                <div id="stick"></div>
-            </div>
+<div id="joystick">
 
-        </div>
-
-        <div id="rightPanel">
-
-            <h2>Velocidade</h2>
-
-            <button id="plus">+</button>
-
-            <span id="speedValue">100%</span>
-
-            <button id="minus">-</button>
-
-            <hr>
-
-            <p>X: <span id="xValue">0.00</span></p>
-
-            <p>Y: <span id="yValue">0.00</span></p>
-
-            <p>Estado:
-                <span id="connection">
-                    Conectado
-                </span>
-            </p>
-
-            <p>Último comando:
-                <span id="lastCommand">
-                    Parado
-                </span>
-            </p>
-
-        </div>
-
-    </div>
+<div id="stick"></div>
 
 </div>
+
+</div>
+
+<div id="right">
+
+<button id="plus">+</button>
+
+<div id="speedValue">
+100%
+</div>
+
+<button id="minus">−</button>
+
+</div>
+
+</div>
+
+<div id="info">
+
+<p>
+
+X:
+<span id="xValue">
+0.00
+</span>
+
+</p>
+
+<p>
+
+Y:
+<span id="yValue">
+0.00
+</span>
+
+</p>
+
+<p id="lastCommand">
+
+Parado
+
+</p>
+
+</div>
+
+</div>
+
 <script src="script.js"></script>
 
 </body>
+
 </html>
