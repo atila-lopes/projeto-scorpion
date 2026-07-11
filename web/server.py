@@ -37,6 +37,7 @@ def command():
 
     # Extrai o comando recebido
     cmd = data["command"]
+    speed = data["speed"]
 
     # Salva o comando em um arquivo texto
     # Esse arquivo será lido continuamente pelo controlador do Webots
@@ -44,7 +45,8 @@ def command():
         "../worlds/command.txt",
         "w"
     ) as f:
-        f.write(cmd)
+
+        f.write(f"{cmd} {speed}")
 
     # Exibe o comando recebido no terminal
     print("Comando recebido:", cmd)
