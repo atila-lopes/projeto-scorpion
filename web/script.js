@@ -38,7 +38,7 @@ minus.addEventListener("click", () => {
 // Envio de comandos
 // -------------------------
 
-async function sendCommand(cmd) {
+async function sendCommand(cmd,  currentSpeed) {
 
     try {
 
@@ -54,7 +54,7 @@ async function sendCommand(cmd) {
 
                 command: cmd,
 
-                speed: speed
+                speed: currentSpeed
 
             })
 
@@ -101,7 +101,7 @@ function stopDrag() {
 
     lastCommand.innerHTML = "Parado";
 
-    sendCommand("S");
+    sendCommand("S", 0);
 
 }
 
@@ -143,22 +143,29 @@ function moveStick(e) {
 
     let cmd = "S";
 
-    if (ny > 0.4) {
+    let intensity = Math.sqrt(nx * nx + ny * ny);
+
+    intensity = Math.min(intensity, 1.0);
+
+    let currentSpeed =
+        Math.round(speed * intensity);
+
+    if (ny > 0.2) {
 
         cmd = "F";
 
     }
-    else if (ny < -0.4) {
+    else if (ny < -0.2) {
 
         cmd = "B";
 
     }
-    else if (nx > 0.4) {
+    else if (nx > 0.2) {
 
         cmd = "R";
 
     }
-    else if (nx < -0.4) {
+    else if (nx < -0.2) {
 
         cmd = "L";
 
@@ -188,6 +195,6 @@ function moveStick(e) {
 
     }
 
-    sendCommand(cmd);
+    sendCommand(cmd, currentSpeed);
 
 }
