@@ -1,116 +1,175 @@
+*{
+
+margin:0;
+
+padding:0;
+
+box-sizing:border-box;
+
+touch-action:none;
+
+user-select:none;
+
+font-family:Arial;
+
+}
+
 body{
 
-    margin:0;
+background:#1d1f22;
 
-    background:#202124;
+color:white;
 
-    color:white;
+display:flex;
 
-    font-family:Arial;
+justify-content:center;
+
+align-items:center;
+
+height:100vh;
 
 }
 
 #container{
 
-    width:95%;
+width:90%;
 
-    margin:auto;
+max-width:900px;
+
+padding:30px;
+
+background:#2c3035;
+
+border-radius:20px;
+
+box-shadow:0 0 30px black;
 
 }
 
 h1{
 
-    text-align:center;
+text-align:center;
+
+margin-bottom:30px;
 
 }
 
-#mainPanel{
+#main{
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    align-items:center;
-
-}
-
-#leftPanel{
-
-    width:60%;
-
-    display:flex;
-
-    justify-content:center;
+align-items:center;
 
 }
 
-#rightPanel{
+#left{
 
-    width:35%;
+flex:1;
 
-    text-align:center;
+display:flex;
+
+justify-content:center;
 
 }
 
-#speedValue{
+#right{
 
-    display:block;
+width:120px;
 
-    font-size:30px;
+display:flex;
 
-    margin:15px;
+flex-direction:column;
+
+align-items:center;
+
+gap:20px;
 
 }
 
 button{
 
-    width:70px;
+width:70px;
 
-    height:50px;
+height:70px;
 
-    font-size:24px;
+font-size:32px;
+
+border:none;
+
+border-radius:50%;
+
+background:#1976D2;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+button:hover{
+
+background:#0D47A1;
+
+}
+
+#speedValue{
+
+font-size:26px;
+
+font-weight:bold;
 
 }
 
 #joystick{
 
-    width:280px;
+width:250px;
 
-    height:280px;
+height:250px;
 
-    background:#444;
+border-radius:50%;
 
-    border-radius:20px;
+background:#444;
 
-    position:relative;
+position:relative;
 
-    touch-action:none;
+border:6px solid #666;
 
-    user-select:none;
+overflow:hidden;
+
 }
 
 #stick{
 
-    width:80px;
+width:80px;
 
-    height:80px;
+height:80px;
 
-    border-radius:50%;
+background:#03A9F4;
 
-    background:#4CAF50;
+border-radius:50%;
 
-    position:absolute;
+position:absolute;
 
-    left:100px;
+left:85px;
 
-    top:100px;
+top:85px;
 
-    cursor:pointer;
+transition:0.03s;
 
-    touch-action:none;
 }
 
-hr{
+#info{
 
-    margin:25px;
+margin-top:30px;
+
+text-align:center;
+
+font-size:22px;
+
+display:flex;
+
+justify-content:space-around;
+
 }
