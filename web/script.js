@@ -1,73 +1,88 @@
+//--------------------------------------
+// Elementos da interface
+//--------------------------------------
+
 const joystick = document.getElementById("joystick");
-const stick = document.getElementById("stick");
+const manche = document.getElementById("stick");
 
-const xValue = document.getElementById("xValue");
-const yValue = document.getElementById("yValue");
+const valorX = document.getElementById("xValue");
+const valorY = document.getElementById("yValue");
 
-const lastCommand = document.getElementById("lastCommand");
+const ultimoComando = document.getElementById("lastCommand");
 
-const speedValue = document.getElementById("speedValue");
-const plus = document.getElementById("plus");
-const minus = document.getElementById("minus");
-
-let speed = 100;
-
-const JOYSTICK_SIZE = 250;
-const STICK_SIZE = 80;
-
-const CENTER = JOYSTICK_SIZE / 2;
-const STICK_RADIUS = STICK_SIZE / 2;
-
-// raio útil do joystick
-const MAX_RADIUS = CENTER - STICK_RADIUS;
-
-let pointerId = null;
-
+const valorVelocidade = document.getElementById("speedValue");
+const botaoMais = document.getElementById("plus");
+const botaoMenos = document.getElementById("minus");
 
 
 //--------------------------------------
-// Velocidade
+// Configurações
 //--------------------------------------
 
-plus.onclick = () => {
+const TAMANHO_JOYSTICK = 250;
+const TAMANHO_MANCHE = 80;
 
-    speed = Math.min(100, speed + 10);
+const CENTRO = TAMANHO_JOYSTICK / 2;
+const RAIO_MANCHE = TAMANHO_MANCHE / 2;
 
-    speedValue.textContent = speed + "%";
-
-};
-
-minus.onclick = () => {
-
-    speed = Math.max(0, speed - 10);
-
-    speedValue.textContent = speed + "%";
-
-};
-
+// Raio máximo que o manche pode alcançar
+const RAIO_MAXIMO = CENTRO - RAIO_MANCHE;
 
 
 //--------------------------------------
-// Comunicação
+// Estado da aplicação
 //--------------------------------------
 
-async function sendCommand(x, y, speed){
+let velocidade = 100;
 
-    try{
+let idPonteiro = null;
 
-        await fetch("/command",{
 
-            method:"POST",
+//--------------------------------------
+// Controle de velocidade
+//--------------------------------------
 
-            headers:{
-                "Content-Type":"application/json"
+botaoMais.onclick = aumentarVelocidade;
+botaoMenos.onclick = diminuirVelocidade;
+
+function aumentarVelocidade() {
+
+    velocidade = Math.min(100, velocidade + 10);
+
+    valorVelocidade.textContent = velocidade + "%";
+
+}
+
+function diminuirVelocidade() {
+
+    velocidade = Math.max(0, velocidade - 10);
+
+    valorVelocidade.textContent = velocidade + "%";
+
+}
+
+
+//--------------------------------------
+// Comunicação com o servidor
+//--------------------------------------
+
+async function enviarComando(x, y, velocidade) {
+
+    try {
+
+        await fetch("/command", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
             },
 
-            body:JSON.stringify({
+            body: JSON.stringify({
 
-                x:x,
-                y:y,
-                speed:speed
+                x: x,
+                y: y,
+                speed: velocidade
 
             })
 
@@ -75,150 +90,139 @@ async function sendCommand(x, y, speed){
 
     }
 
-    catch(e){
+    catch (erro) {
 
-        console.log(e);
+        console.log(erro);
 
     }
 
 }
-
 
 
 //--------------------------------------
 // Eventos
 //--------------------------------------
 
-joystick.addEventListener("pointerdown",startDrag);
+joystick.addEventListener("pointerdown", iniciarControle);
 
-document.addEventListener("pointermove",moveDrag);
+document.addEventListener("pointermove", processarMovimento);
 
-document.addEventListener("pointerup",stopDrag);
-
+document.addEventListener("pointerup", encerrarControle);
 
 
 //--------------------------------------
+// Funções do joystick
+//--------------------------------------
 
-function startDrag(e){
+function iniciarControle(evento) {
 
-    pointerId = e.pointerId;
+    idPonteiro = evento.pointerId;
 
-    joystick.setPointerCapture(pointerId);
+    joystick.setPointerCapture(idPonteiro);
 
-    updateJoystick(e);
+    atualizarJoystick(evento);
 
 }
 
+function processarMovimento(evento) {
 
-
-//--------------------------------------
-
-function moveDrag(e){
-
-    if(e.pointerId != pointerId)
+    if (evento.pointerId != idPonteiro)
         return;
 
-    updateJoystick(e);
+    atualizarJoystick(evento);
 
 }
 
+function encerrarControle(evento) {
 
-
-//--------------------------------------
-
-function stopDrag(e){
-
-    if(e.pointerId != pointerId)
+    if (evento.pointerId != idPonteiro)
         return;
 
-    pointerId = null;
+    idPonteiro = null;
 
-    stick.style.left =
-        (CENTER-STICK_RADIUS)+"px";
+    manche.style.left = (CENTRO - RAIO_MANCHE) + "px";
 
-    stick.style.top =
-        (CENTER-STICK_RADIUS)+"px";
+    manche.style.top = (CENTRO - RAIO_MANCHE) + "px";
 
-    xValue.textContent="0.00";
-    yValue.textContent="0.00";
+    valorX.textContent = "0.00";
+    valorY.textContent = "0.00";
 
-    lastCommand.textContent="Parado";
+    ultimoComando.textContent = "Parado";
 
-    sendCommand(0,0,0);
+    enviarComando(0, 0, 0);
 
 }
 
+function atualizarJoystick(evento) {
 
-
-//--------------------------------------
-
-function updateJoystick(e){
-
-    const rect =
+    const areaJoystick =
         joystick.getBoundingClientRect();
 
-    let dx =
-        e.clientX -
-        rect.left -
-        CENTER;
+    let deslocamentoX =
+        evento.clientX -
+        areaJoystick.left -
+        CENTRO;
 
-    let dy =
-        e.clientY -
-        rect.top -
-        CENTER;
+    let deslocamentoY =
+        evento.clientY -
+        areaJoystick.top -
+        CENTRO;
 
-    const distance =
-        Math.sqrt(dx*dx + dy*dy);
+    const distancia =
+        Math.sqrt(
+            deslocamentoX * deslocamentoX +
+            deslocamentoY * deslocamentoY
+        );
 
-    if(distance > MAX_RADIUS){
+    if (distancia > RAIO_MAXIMO) {
 
-        dx =
-            dx/distance*MAX_RADIUS;
+        deslocamentoX =
+            deslocamentoX / distancia * RAIO_MAXIMO;
 
-        dy =
-            dy/distance*MAX_RADIUS;
+        deslocamentoY =
+            deslocamentoY / distancia * RAIO_MAXIMO;
 
     }
 
-    stick.style.left =
-        (CENTER + dx - STICK_RADIUS)+"px";
+    manche.style.left =
+        (CENTRO + deslocamentoX - RAIO_MANCHE) + "px";
 
-    stick.style.top =
-        (CENTER + dy - STICK_RADIUS)+"px";
+    manche.style.top =
+        (CENTRO + deslocamentoY - RAIO_MANCHE) + "px";
 
-    let nx =
-        dx/MAX_RADIUS;
+    let x =
+        deslocamentoX / RAIO_MAXIMO;
 
-    let ny =
-        -dy/MAX_RADIUS;
+    let y =
+        -deslocamentoY / RAIO_MAXIMO;
 
-    xValue.textContent =
-        nx.toFixed(2);
+    valorX.textContent =
+        x.toFixed(2);
 
-    yValue.textContent =
-        ny.toFixed(2);
+    valorY.textContent =
+        y.toFixed(2);
 
-    let intensity =
+    let intensidade =
         Math.min(
-            Math.sqrt(nx*nx+ny*ny),
+            Math.sqrt(x * x + y * y),
             1
         );
 
-    let currentSpeed =
+    let velocidadeAtual =
         Math.round(
-            intensity*speed
+            intensidade * velocidade
         );
 
-    lastCommand.textContent =
-        "X: "+
-        nx.toFixed(2)+
-        "  Y: "+
-        ny.toFixed(2);
+    ultimoComando.textContent =
+        "X: " +
+        x.toFixed(2) +
+        "  Y: " +
+        y.toFixed(2);
 
-    sendCommand(
-        nx,
-        ny,
-        currentSpeed
+    enviarComando(
+        x,
+        y,
+        velocidadeAtual
     );
 
 }
