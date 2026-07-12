@@ -39,7 +39,7 @@ def command():
 
     speed = data["speed"]
 
-    with open("../worlds/command.txt","w") as f:
+    with open("../data/command.txt","w") as f:
 
         f.write(f"{x} {y} {speed}")
 
