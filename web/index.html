@@ -4,82 +4,113 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
 
-<title>Scorpion Control</title>
+    <title>Scorpion Control</title>
 
-<link
-rel="stylesheet"
-href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 
 </head>
 
 <body>
 
-<div id="container">
+    <!------------------------------------
+    Container principal
+    ------------------------------------->
 
-<h1>SCORPION CONTROL</h1>
+    <div id="container">
 
-<div id="main">
+        <!--------------------------------
+        Título
+        --------------------------------->
 
-<div id="left">
+        <h1>SCORPION CONTROL</h1>
 
-<div id="joystick">
+        <!--------------------------------
+        Área principal
+        --------------------------------->
 
-<div id="stick"></div>
+        <div id="main">
 
-</div>
+            <!----------------------------
+            Joystick
+            ----------------------------->
 
-</div>
+            <div id="left">
 
-<div id="right">
+                <div id="joystick">
 
-<button id="plus">+</button>
+                    <div id="stick"></div>
 
-<div id="speedValue">
-100%
-</div>
+                </div>
 
-<button id="minus">−</button>
+            </div>
 
-</div>
+            <!----------------------------
+            Controle de velocidade
+            ----------------------------->
 
-</div>
+            <div id="right">
 
-<div id="info">
+                <button id="plus">+</button>
 
-<p>
+                <div id="speedValue">
+                    100%
+                </div>
 
-X:
-<span id="xValue">
-0.00
-</span>
+                <button id="minus">−</button>
 
-</p>
+            </div>
 
-<p>
+        </div>
 
-Y:
-<span id="yValue">
-0.00
-</span>
+        <!--------------------------------
+        Informações
+        --------------------------------->
 
-</p>
+        <div id="info">
 
-<p id="lastCommand">
+            <p>
 
-Parado
+                X:
+                <span id="xValue">
+                    0.00
+                </span>
 
-</p>
+            </p>
 
-</div>
+            <p>
 
-</div>
+                Y:
+                <span id="yValue">
+                    0.00
+                </span>
 
-<script src="script.js"></script>
+            </p>
+
+            <p id="lastCommand">
+
+                Parado
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!------------------------------------
+    Scripts
+    ------------------------------------->
+
+    <script src="script.js"></script>
 
 </body>
 
