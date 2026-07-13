@@ -20,3 +20,11 @@ build/
 
 Thumbs.db
 .DS_Store
+
+
+#--------------------------------------
+# Arquivos do Webots
+#--------------------------------------
+
+*.wbproj
+worlds/*.jpg
