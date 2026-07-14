@@ -1,175 +1,164 @@
-*{
+/* =========================================================
+   RESET
+========================================================= */
 
-margin:0;
-
-padding:0;
-
-box-sizing:border-box;
-
-touch-action:none;
-
-user-select:none;
-
-font-family:Arial;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    touch-action: none;
+    user-select: none;
+    font-family: Arial, sans-serif;
 }
 
-body{
 
-background:#1d1f22;
+/* =========================================================
+   BODY
+========================================================= */
 
-color:white;
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-display:flex;
+    height: 100vh;
 
-justify-content:center;
-
-align-items:center;
-
-height:100vh;
-
+    background: #1d1f22;
+    color: white;
 }
 
-#container{
 
-width:90%;
+/* =========================================================
+   CONTAINER
+========================================================= */
 
-max-width:900px;
+#container {
+    width: 90%;
+    max-width: 900px;
 
-padding:30px;
+    padding: 30px;
 
-background:#2c3035;
-
-border-radius:20px;
-
-box-shadow:0 0 30px black;
-
+    background: #2c3035;
+    border-radius: 20px;
+    box-shadow: 0 0 30px black;
 }
 
-h1{
 
-text-align:center;
+/* =========================================================
+   TÍTULO
+========================================================= */
 
-margin-bottom:30px;
-
+h1 {
+    margin-bottom: 30px;
+    text-align: center;
 }
 
-#main{
 
-display:flex;
+/* =========================================================
+   LAYOUT PRINCIPAL
+========================================================= */
 
-justify-content:space-between;
-
-align-items:center;
-
+#main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-#left{
+#left {
+    flex: 1;
 
-flex:1;
-
-display:flex;
-
-justify-content:center;
-
+    display: flex;
+    justify-content: center;
 }
 
-#right{
+#right {
+    width: 120px;
 
-width:120px;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-gap:20px;
-
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
-button{
 
-width:70px;
+/* =========================================================
+   BOTÕES
+========================================================= */
 
-height:70px;
+button {
+    width: 70px;
+    height: 70px;
 
-font-size:32px;
+    border: none;
+    border-radius: 50%;
 
-border:none;
+    background: #1976D2;
+    color: white;
 
-border-radius:50%;
-
-background:#1976D2;
-
-color:white;
-
-cursor:pointer;
-
+    font-size: 32px;
+    cursor: pointer;
 }
 
-button:hover{
-
-background:#0D47A1;
-
+button:hover {
+    background: #0D47A1;
 }
 
-#speedValue{
 
-font-size:26px;
+/* =========================================================
+   VELOCIDADE
+========================================================= */
 
-font-weight:bold;
-
+#speedValue {
+    font-size: 26px;
+    font-weight: bold;
 }
 
-#joystick{
 
-width:250px;
+/* =========================================================
+   JOYSTICK
+========================================================= */
 
-height:250px;
+#joystick {
+    position: relative;
 
-border-radius:50%;
+    width: 250px;
+    height: 250px;
 
-background:#444;
+    overflow: hidden;
 
-position:relative;
+    border: 6px solid #666;
+    border-radius: 50%;
 
-border:6px solid #666;
-
-overflow:hidden;
-
+    background: #444;
 }
 
-#stick{
+#stick {
+    position: absolute;
 
-width:80px;
+    width: 80px;
+    height: 80px;
 
-height:80px;
+    left: 85px;
+    top: 85px;
 
-background:#03A9F4;
+    border-radius: 50%;
 
-border-radius:50%;
+    background: #03A9F4;
 
-position:absolute;
-
-left:85px;
-
-top:85px;
-
-transition:0.03s;
-
+    transition: 0.03s;
 }
 
-#info{
 
-margin-top:30px;
+/* =========================================================
+   INFORMAÇÕES
+========================================================= */
 
-text-align:center;
+#info {
+    display: flex;
+    justify-content: space-around;
 
-font-size:22px;
+    margin-top: 30px;
 
-display:flex;
-
-justify-content:space-around;
-
+    text-align: center;
+    font-size: 22px;
 }
