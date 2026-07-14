@@ -11,9 +11,21 @@ const valorY = document.getElementById("yValue");
 const ultimoComando = document.getElementById("lastCommand");
 
 const valorVelocidade = document.getElementById("speedValue");
-const botaoMais = document.getElementById("plus");
-const botaoMenos = document.getElementById("minus");
 
+const botaoAumentarVelocidade =
+    document.getElementById("botaoAumentarVelocidade");
+
+const botaoDiminuirVelocidade =
+    document.getElementById("botaoDiminuirVelocidade");
+
+const botaoAprenderRota =
+    document.getElementById("botaoAprenderRota");
+
+const botaoFinalizarRota =
+    document.getElementById("botaoFinalizarRota");
+
+const botaoRotas =
+    document.getElementById("botaoRotas");
 
 //--------------------------------------
 // Configurações
@@ -37,13 +49,22 @@ let velocidade = 100;
 
 let idPonteiro = null;
 
+let gravandoRota = false;
+
 
 //--------------------------------------
 // Controle de velocidade
 //--------------------------------------
 
-botaoMais.onclick = aumentarVelocidade;
-botaoMenos.onclick = diminuirVelocidade;
+botaoAumentarVelocidade.onclick = aumentarVelocidade;
+
+botaoDiminuirVelocidade.onclick = diminuirVelocidade;
+
+botaoAprenderRota.onclick = iniciarGravacaoRota;
+
+botaoFinalizarRota.onclick = finalizarGravacaoRota;
+
+botaoRotas.onclick = abrirRotas;
 
 function aumentarVelocidade() {
 
@@ -58,6 +79,35 @@ function diminuirVelocidade() {
     velocidade = Math.max(0, velocidade - 10);
 
     valorVelocidade.textContent = velocidade + "%";
+
+}
+
+async function iniciarGravacaoRota() {
+
+    gravandoRota = true;
+
+    ultimoComando.textContent =
+        "Gravando rota...";
+
+    await iniciarGravacaoServidor();
+
+}
+
+async function finalizarGravacaoRota() {
+
+    gravandoRota = false;
+
+    ultimoComando.textContent =
+        "Gravação finalizada.";
+
+    await finalizarGravacaoServidor();
+
+}
+
+function abrirRotas() {
+
+    ultimoComando.textContent =
+        "Lista de rotas (em desenvolvimento).";
 
 }
 
@@ -85,6 +135,47 @@ async function enviarComando(x, y, velocidade) {
                 speed: velocidade
 
             })
+
+        });
+
+    }
+
+    catch (erro) {
+
+        console.log(erro);
+
+    }
+
+}
+
+async function iniciarGravacaoServidor() {
+
+    try {
+
+        await fetch("/rota/iniciar", {
+
+            method: "POST"
+
+        });
+
+    }
+
+    catch (erro) {
+
+        console.log(erro);
+
+    }
+
+}
+
+
+async function finalizarGravacaoServidor() {
+
+    try {
+
+        await fetch("/rota/finalizar", {
+
+            method: "POST"
 
         });
 

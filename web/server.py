@@ -55,6 +55,25 @@ def comando():
         "status": "ok"
     }
 
+@app.route("/rota/iniciar", methods=["POST"])
+def iniciar_gravacao():
+
+    print("Iniciando gravação da rota.")
+
+    return {
+        "status": "ok"
+    }
+
+
+@app.route("/rota/finalizar", methods=["POST"])
+def finalizar_gravacao():
+
+    print("Finalizando gravação da rota.")
+
+    return {
+        "status": "ok"
+    }
+
 
 #--------------------------------------
 # Inicialização do servidor
