@@ -13,6 +13,10 @@ from flask import send_from_directory
 
 app = Flask(__name__)
 
+gravando_rota = False
+
+comandos_rota = []
+
 
 #--------------------------------------
 # Rotas
@@ -44,6 +48,15 @@ def comando():
     x = dados["x"]
     y = dados["y"]
     velocidade = dados["speed"]
+    if gravando_rota:
+
+        comandos_rota.append({
+
+            "x": x,
+            "y": y,
+            "velocidade": velocidade
+
+    })
 
     with open("../data/command.txt", "w") as arquivo:
 
@@ -58,22 +71,33 @@ def comando():
 @app.route("/rota/iniciar", methods=["POST"])
 def iniciar_gravacao():
 
+    global gravando_rota
+
+    comandos_rota.clear()
+
+    gravando_rota = True
+
     print("Iniciando gravação da rota.")
 
     return {
         "status": "ok"
     }
 
-
 @app.route("/rota/finalizar", methods=["POST"])
 def finalizar_gravacao():
 
-    print("Finalizando gravação da rota.")
+        global gravando_rota
 
-    return {
-        "status": "ok"
-    }
+        gravando_rota = False
+    
+        print(
+            "Comandos gravados:",
+            len(comandos_rota)
+        )
 
+        return {
+            "status": "ok"
+        }
 
 #--------------------------------------
 # Inicialização do servidor
