@@ -1,172 +1,182 @@
+//--------------------------------------
 // Bibliotecas do Webots
-#include <webots/Robot.hpp>
-#include <webots/Motor.hpp>
-
-// Biblioteca utilizada para obter o diretório atual
-#include <filesystem>
-
-// Bibliotecas padrão da linguagem
-#include <iostream>
-#include <fstream>
-#include <string>
+//--------------------------------------
 
 #include <webots/DistanceSensor.hpp>
+#include <webots/Motor.hpp>
+#include <webots/Robot.hpp>
+
+
+//--------------------------------------
+// Bibliotecas da linguagem C++
+//--------------------------------------
+
+#include <algorithm>
+#include <cmath>
+#include <fstream>
+#include <iostream>
+
+
+//--------------------------------------
+// Constantes
+//--------------------------------------
+
+const int QUANTIDADE_SENSORES = 8;
+
+const double VELOCIDADE_MAXIMA_MOTOR = 6.28;
+
+
+//--------------------------------------
+// Namespace
+//--------------------------------------
 
 using namespace webots;
 
+
+//--------------------------------------
+// Função principal
+//--------------------------------------
+
 int main() {
 
-  // Cria a instância do robô
-  Robot robot;
+    //----------------------------------
+    // Inicialização do robô
+    //----------------------------------
 
-  // Obtém o passo de simulação definido no mundo do Webots
-  int timestep =
-      (int)robot.getBasicTimeStep();
+    Robot robo;
 
-  // Obtém os motores esquerdo e direito do robô
-  Motor *leftMotor =
-      robot.getMotor("left wheel motor");
+    int passoTempo =
+        (int)robo.getBasicTimeStep();
 
-  Motor *rightMotor =
-      robot.getMotor("right wheel motor");
 
-  // Verifica se ambos os motores foram encontrados
-  if (!leftMotor || !rightMotor) {
-    std::cout << "Motores nao encontrados!"
-              << std::endl;
-    return 1;
-  }
+    //----------------------------------
+    // Inicialização dos motores
+    //----------------------------------
 
-  // Configura os motores para rotação contínua
-  leftMotor->setPosition(INFINITY);
-  rightMotor->setPosition(INFINITY);
+    Motor *motorEsquerdo =
+        robo.getMotor("left wheel motor");
 
-  // Inicializa o robô parado
-  leftMotor->setVelocity(0.0);
-  rightMotor->setVelocity(0.0);
-  
-  DistanceSensor *ps[8];
-  
-  char sensorNames[8][4] = {
-    "ps0", "ps1", "ps2", "ps3", "ps4", "ps5", "ps6", "ps7"
-  };
-  
-  for (int i = 0; i < 8; i++){
-    ps[i] = robot.getDistanceSensor(sensorNames[i]);
-    ps[i]->enable(timestep);
-  }
+    Motor *motorDireito =
+        robo.getMotor("right wheel motor");
 
-  // Exibe o diretório atual para auxiliar na depuração
-  std::cout
-    << std::filesystem::current_path()
-    << std::endl;
+    if (!motorEsquerdo || !motorDireito) {
 
-  // Loop principal da simulação
-  while (robot.step(timestep) != -1) {
+        std::cout
+            << "Erro: motores do robô não encontrados."
+            << std::endl;
 
-    // Abre o arquivo contendo o comando enviado pela interface Web
-    std::ifstream file(
-      "../../worlds/command.txt"
-    );
-
-  double value[8];
-  
-  for (int i = 0; i < 8; i++)
-    value[i] = ps[i]->getValue();
-  
-  const double LIMIT = 80.0;
-  
-  bool frontBlocked =
-    value[0] > LIMIT ||
-    value[1] > LIMIT ||
-    value[6] > LIMIT ||
-    value[7] > LIMIT;
-  
-  bool leftBlocked =
-    value[5] > LIMIT ||
-    value[6] > LIMIT;
-
-  bool rightBlocked =
-    value[1] > LIMIT ||
-    value[2] > LIMIT;
-
-  bool rearBlocked =
-    value[3] > LIMIT ||
-    value[4] > LIMIT;
-  
-    // Verifica se o arquivo foi aberto corretamente
-    if (file) {
-      std::cout << "Arquivo aberto!" << std::endl;
-    }
-    else {
-      std::cout << "Nao consegui abrir o arquivo!" << std::endl;
-    }
-
-    // Caso não exista comando, mantém o robô parado
-    std::string cmd = "S";
-
-    // Lê o comando presente no arquivo
-    if (file)
-      file >> cmd;
-
-    // Executa a ação correspondente ao comando recebido
-
-    // Movimento para frente
-    if (cmd == "F") {
-      
-      if (!frontBlocked) {
-        leftMotor->setVelocity(6.0);
-        rightMotor->setVelocity(6.0);
-      } else {
-        leftMotor->setVelocity(0.0);
-        rightMotor->setVelocity(0.0);
-      }
+        return 1;
 
     }
-    // Movimento para trás
-    else if (cmd == "B") {
-      if (!rearBlocked) {
-        leftMotor->setVelocity(-6.0);
-        rightMotor->setVelocity(-6.0);
-      } else {
-        leftMotor->setVelocity(0.0);
-        rightMotor->setVelocity(0.0);
-      }
+
+    motorEsquerdo->setPosition(INFINITY);
+    motorDireito->setPosition(INFINITY);
+
+    motorEsquerdo->setVelocity(0);
+    motorDireito->setVelocity(0);
+
+
+    //----------------------------------
+    // Inicialização dos sensores
+    //----------------------------------
+
+    DistanceSensor *sensoresDistancia[QUANTIDADE_SENSORES];
+
+    const char *nomesSensores[QUANTIDADE_SENSORES] = {
+        "ps0", "ps1", "ps2", "ps3",
+        "ps4", "ps5", "ps6", "ps7"
+    };
+
+    for (int i = 0; i < QUANTIDADE_SENSORES; i++) {
+
+        sensoresDistancia[i] =
+            robo.getDistanceSensor(
+                nomesSensores[i]
+            );
+
+        if (sensoresDistancia[i]) {
+
+            sensoresDistancia[i]->enable(
+                passoTempo
+            );
+
+        }
 
     }
-    // Rotação para a esquerda
-    else if (cmd == "L") {
 
-      if (!leftBlocked) {
-        leftMotor->setVelocity(-3.0);
-        rightMotor->setVelocity(3.0);
-      } else {
-        leftMotor->setVelocity(0.0);
-        rightMotor->setVelocity(0.0);
-      }
 
+    //----------------------------------
+    // Laço principal
+    //----------------------------------
+
+    while (robo.step(passoTempo) != -1) {
+
+        //----------------------------------
+        // Leitura do comando
+        //----------------------------------
+
+        std::ifstream arquivoComando(
+            "../../data/command.txt"
+        );
+
+        double x = 0.0;
+        double y = 0.0;
+        double velocidade = 0.0;
+
+        if (arquivoComando) {
+
+            arquivoComando
+                >> x
+                >> y
+                >> velocidade;
+
+        }
+
+
+        //----------------------------------
+        // Cálculo das velocidades
+        //----------------------------------
+
+        double velocidadeMaxima =
+            VELOCIDADE_MAXIMA_MOTOR *
+            velocidade / 100.0;
+
+        double velocidadeEsquerda =
+            y + x;
+
+        double velocidadeDireita =
+            y - x;
+
+        double maiorVelocidade =
+            std::max(
+                std::abs(velocidadeEsquerda),
+                std::abs(velocidadeDireita)
+            );
+
+        if (maiorVelocidade > 1.0) {
+
+            velocidadeEsquerda /= maiorVelocidade;
+            velocidadeDireita /= maiorVelocidade;
+
+        }
+
+        velocidadeEsquerda *= velocidadeMaxima;
+        velocidadeDireita *= velocidadeMaxima;
+
+
+        //----------------------------------
+        // Aplicação das velocidades
+        //----------------------------------
+
+        motorEsquerdo->setVelocity(
+            velocidadeEsquerda
+        );
+
+        motorDireito->setVelocity(
+            velocidadeDireita
+        );
 
     }
-    // Rotação para a direita
-    else if (cmd == "R") {
 
-      if (!rightBlocked) {
-        leftMotor->setVelocity(3.0);
-        rightMotor->setVelocity(-3.0);
-      } else {
-        leftMotor->setVelocity(0.0);
-        rightMotor->setVelocity(0.0);
-      }
-
-
-    }
-    // Qualquer outro comando mantém o robô parado
-    else {
-
-      leftMotor->setVelocity(0.0);
-      rightMotor->setVelocity(0.0);
-    }
-  }
-
-  return 0;
+    return 0;
 }

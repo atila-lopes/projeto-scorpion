@@ -1,59 +1,71 @@
-# Importa a classe principal do Flask
+#--------------------------------------
+# Bibliotecas
+#--------------------------------------
+
 from flask import Flask
-
-# Importa o objeto utilizado para acessar os dados das requisições
 from flask import request
-
-# Importa função responsável por enviar arquivos ao navegador
 from flask import send_from_directory
 
-# Cria a aplicação Flask
+
+#--------------------------------------
+# Aplicação
+#--------------------------------------
+
 app = Flask(__name__)
 
-# Página principal da aplicação
-@app.route("/")
-def home():
 
-    # Retorna o arquivo HTML
+#--------------------------------------
+# Rotas
+#--------------------------------------
+
+@app.route("/")
+def pagina_inicial():
+
     return send_from_directory(".", "index.html")
 
-# Disponibiliza o arquivo JavaScript
+
 @app.route("/script.js")
-def script():
+def javascript():
 
     return send_from_directory(".", "script.js")
 
+
 @app.route("/style.css")
-def style():
-	return send_from_directory(".", "style.css")
+def css():
+
+    return send_from_directory(".", "style.css")
 
 
 @app.route("/command", methods=["POST"])
-def command():
+def comando():
 
-    data = request.get_json()
+    dados = request.get_json()
 
-    x = data["x"]
+    x = dados["x"]
+    y = dados["y"]
+    velocidade = dados["speed"]
 
-    y = data["y"]
+    with open("../data/command.txt", "w") as arquivo:
 
-    speed = data["speed"]
+        arquivo.write(
+            f"{x} {y} {velocidade}"
+        )
 
-    with open("../worlds/command.txt","w") as f:
+    return {
+        "status": "ok"
+    }
 
-        f.write(f"{x} {y} {speed}")
 
-    return {"status":"ok"}
+#--------------------------------------
+# Inicialização do servidor
+#--------------------------------------
 
-# Inicializa o servidor Web
 app.run(
 
-    # Permite acesso a partir de outras máquinas da rede
     host="0.0.0.0",
 
-    # Porta utilizada pelo servidor
     port=5000,
 
-    # Habilita o modo de desenvolvimento
     debug=True
+
 )
