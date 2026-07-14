@@ -116,7 +116,7 @@ int main() {
         //----------------------------------
 
         std::ifstream arquivoComando(
-            "../../data/command.txt"
+              "../../data/command.txt"
         );
 
         double x = 0.0;

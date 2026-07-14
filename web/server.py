@@ -5,6 +5,7 @@
 from flask import Flask
 from flask import request
 from flask import send_from_directory
+import json
 
 
 #--------------------------------------
@@ -16,6 +17,22 @@ app = Flask(__name__)
 gravando_rota = False
 
 comandos_rota = []
+
+#--------------------------------------
+# Gerenciamento de rotas
+#--------------------------------------
+
+def salvar_rota():
+
+    caminho = "../data/rotas/rota_001.json"
+
+    with open(caminho, "w") as arquivo:
+
+        json.dump(
+            comandos_rota,
+            arquivo,
+            indent=4
+        )
 
 
 #--------------------------------------
@@ -48,6 +65,12 @@ def comando():
     x = dados["x"]
     y = dados["y"]
     velocidade = dados["speed"]
+    print(
+        "Comando:",
+        x,
+        y,
+        velocidade
+    )
     if gravando_rota:
 
         comandos_rota.append({
@@ -56,7 +79,7 @@ def comando():
             "y": y,
             "velocidade": velocidade
 
-    })
+        })
 
     with open("../data/command.txt", "w") as arquivo:
 
@@ -86,19 +109,21 @@ def iniciar_gravacao():
 @app.route("/rota/finalizar", methods=["POST"])
 def finalizar_gravacao():
 
-        global gravando_rota
+    global gravando_rota
 
-        gravando_rota = False
-    
-        print(
-            "Comandos gravados:",
-            len(comandos_rota)
-        )
+    gravando_rota = False
 
-        return {
-            "status": "ok"
-        }
+    salvar_rota()
 
+    print(
+        "Rota salva:",
+        len(comandos_rota),
+        "comandos"
+    )
+
+    return {
+        "status": "ok"
+    }
 #--------------------------------------
 # Inicialização do servidor
 #--------------------------------------
