@@ -27,6 +27,14 @@ const botaoFinalizarRota =
 const botaoRotas =
     document.getElementById("botaoRotas");
 
+const botaoExecutar =
+    document.getElementById(
+        "executarRota"
+    );
+
+botaoExecutar.onclick =
+    executarRota;
+
 //--------------------------------------
 // Configurações
 //--------------------------------------
@@ -108,6 +116,22 @@ function abrirRotas() {
 
     ultimoComando.textContent =
         "Lista de rotas (em desenvolvimento).";
+
+}
+
+async function executarRota() {
+
+    await fetch(
+
+        "/rota/executar",
+
+        {
+
+            method: "POST"
+
+        }
+
+    );
 
 }
 
