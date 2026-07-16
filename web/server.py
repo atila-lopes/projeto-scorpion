@@ -73,6 +73,20 @@ def salvar_rota():
 
         )
 
+def normalizar_tempos():
+
+    if len(comandos_rota) == 0:
+        return
+
+    tempo_inicial = comandos_rota[0]["tempo"]
+
+    for comando in comandos_rota:
+
+        comando["tempo"] = round(
+            comando["tempo"] - tempo_inicial,
+            3
+        )
+
 #--------------------------------------
 # Rotas
 #--------------------------------------
@@ -153,6 +167,8 @@ def finalizar_gravacao():
     global gravando_rota
 
     gravando_rota = False
+
+    normalizar_tempos()
 
     salvar_rota()
 
