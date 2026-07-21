@@ -8,6 +8,7 @@ from flask import send_from_directory
 from datetime import datetime
 import json
 import time
+import os
 
 
 #--------------------------------------
@@ -22,13 +23,48 @@ comandos_rota = []
 
 instante_inicio_gravacao = 0.0
 
+
 #--------------------------------------
 # Gerenciamento de rotas
 #--------------------------------------
 
+def obter_proximo_nome_rota():
+
+    pasta_rotas = "../data/rotas"
+
+    maior_numero = 0
+
+    for nome_arquivo in os.listdir(pasta_rotas):
+
+        if not nome_arquivo.startswith("rota_"):
+            continue
+
+        if not nome_arquivo.endswith(".json"):
+            continue
+
+        try:
+
+            numero = int(
+                nome_arquivo
+                .replace("rota_", "")
+                .replace(".json", "")
+            )
+
+            if numero > maior_numero:
+
+                maior_numero = numero
+
+        except ValueError:
+
+            continue
+
+    return f"rota_{maior_numero + 1:03d}"
+
 def salvar_rota():
 
-    caminho = "../data/rotas/rota_001.json"
+    nome_rota = obter_proximo_nome_rota()
+
+    caminho = f"../data/rotas/{nome_rota}.json"
 
     if len(comandos_rota) > 0:
 
@@ -40,7 +76,7 @@ def salvar_rota():
 
     rota = {
 
-        "nome": "rota_001",
+        "nome": nome_rota,
 
         "data_criacao":
             datetime.now().isoformat(),
@@ -185,7 +221,7 @@ def finalizar_gravacao():
 @app.route("/rota/executar", methods=["POST"])
 def executar_rota():
 
-    caminho = "../data/rotas/rota_001.json"
+    caminho = f"../data/rotas/rota_001.json"
 
     with open(
         caminho,
