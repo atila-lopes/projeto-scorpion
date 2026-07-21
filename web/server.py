@@ -60,6 +60,28 @@ def obter_proximo_nome_rota():
 
     return f"rota_{maior_numero + 1:03d}"
 
+def listar_rotas():
+
+    pasta_rotas = "../data/rotas"
+
+    rotas = []
+
+    for nome_arquivo in os.listdir(pasta_rotas):
+
+        if not nome_arquivo.startswith("rota_"):
+            continue
+
+        if not nome_arquivo.endswith(".json"):
+            continue
+
+        nome_rota = nome_arquivo.replace(".json", "")
+
+        rotas.append(nome_rota)
+
+    rotas.sort()
+
+    return rotas
+
 def salvar_rota():
 
     nome_rota = obter_proximo_nome_rota()
@@ -178,6 +200,11 @@ def comando():
     return {
         "status": "ok"
     }
+
+@app.route("/rotas")
+def obter_rotas():
+
+    return listar_rotas()
 
 @app.route("/rota/iniciar", methods=["POST"])
 def iniciar_gravacao():
