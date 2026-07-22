@@ -27,6 +27,9 @@ const botaoFinalizarRota =
 const botaoRotas =
     document.getElementById("botaoRotas");
 
+const listaRotas =
+    document.getElementById("listaRotas");
+
 const botaoExecutar =
     document.getElementById(
         "executarRota"
@@ -110,16 +113,42 @@ async function finalizarGravacaoRota() {
 
     await finalizarGravacaoServidor();
 
+    await abrirRotas();
+
 }
 
-function abrirRotas() {
+async function abrirRotas() {
 
-    ultimoComando.textContent =
-        "Lista de rotas (em desenvolvimento).";
+    const rotas =
+        await carregarRotasServidor();
+
+    atualizarListaRotas(rotas);
+
+}
+
+function atualizarListaRotas(rotas) {
+
+    listaRotas.innerHTML = "";
+
+    for (const rota of rotas) {
+
+        const opcao =
+            document.createElement("option");
+
+        opcao.value = rota;
+
+        opcao.textContent = rota;
+
+        listaRotas.appendChild(opcao);
+
+    }
 
 }
 
 async function executarRota() {
+
+    const rotaSelecionada =
+        listaRotas.value;
 
     await fetch(
 
@@ -127,11 +156,45 @@ async function executarRota() {
 
         {
 
-            method: "POST"
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+                rota: rotaSelecionada
+
+            })
 
         }
 
     );
+
+}
+
+async function carregarRotasServidor() {
+
+    try {
+
+        const resposta =
+            await fetch("/rotas");
+
+        return await resposta.json();
+
+    }
+
+    catch (erro) {
+
+        console.log(erro);
+
+        return [];
+
+    }
 
 }
 
@@ -212,6 +275,8 @@ async function finalizarGravacaoServidor() {
     }
 
 }
+
+abrirRotas();
 
 
 //--------------------------------------

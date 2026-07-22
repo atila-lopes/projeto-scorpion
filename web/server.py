@@ -248,7 +248,13 @@ def finalizar_gravacao():
 @app.route("/rota/executar", methods=["POST"])
 def executar_rota():
 
-    caminho = f"../data/rotas/rota_001.json"
+    dados = request.get_json()
+
+    nome_rota = dados["rota"]
+
+    caminho = f"../data/rotas/{nome_rota}.json"
+
+    print("Executando:", nome_rota)
 
     with open(
         caminho,
