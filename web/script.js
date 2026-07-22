@@ -24,9 +24,6 @@ const botaoAprenderRota =
 const botaoFinalizarRota =
     document.getElementById("botaoFinalizarRota");
 
-const botaoRotas =
-    document.getElementById("botaoRotas");
-
 const listaRotas =
     document.getElementById("listaRotas");
 
@@ -37,6 +34,22 @@ const botaoExecutar =
 
 botaoExecutar.onclick =
     executarRota;
+
+const botaoRenomearRota =
+    document.getElementById(
+        "botaoRenomearRota"
+    );
+
+botaoRenomearRota.onclick =
+    renomearRota;
+
+const botaoExcluirRota =
+    document.getElementById(
+        "botaoExcluirRota"
+    );
+
+botaoExcluirRota.onclick =
+    excluirRota;
 
 //--------------------------------------
 // Configurações
@@ -74,8 +87,6 @@ botaoDiminuirVelocidade.onclick = diminuirVelocidade;
 botaoAprenderRota.onclick = iniciarGravacaoRota;
 
 botaoFinalizarRota.onclick = finalizarGravacaoRota;
-
-botaoRotas.onclick = abrirRotas;
 
 function aumentarVelocidade() {
 
@@ -117,15 +128,6 @@ async function finalizarGravacaoRota() {
 
 }
 
-async function abrirRotas() {
-
-    const rotas =
-        await carregarRotasServidor();
-
-    atualizarListaRotas(rotas);
-
-}
-
 function atualizarListaRotas(rotas) {
 
     listaRotas.innerHTML = "";
@@ -148,7 +150,7 @@ function atualizarListaRotas(rotas) {
 async function executarRota() {
 
     const rotaSelecionada =
-        listaRotas.value;
+        obterRotaSelecionada();
 
     await fetch(
 
@@ -195,6 +197,107 @@ async function carregarRotasServidor() {
         return [];
 
     }
+
+}
+
+function obterRotaSelecionada() {
+
+    return listaRotas.value;
+
+}
+
+async function renomearRota() {
+
+    const rotaAtual =
+        obterRotaSelecionada();
+
+    const novoNome =
+        prompt("Novo nome da rota:");
+
+    if (novoNome == null)
+        return;
+
+    if (novoNome.trim() == "")
+        return;
+
+    await fetch("/rota/renomear", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            rota: rotaAtual,
+
+            novo_nome: novoNome
+
+        })
+
+    });
+
+    await abrirRotas();
+
+}
+
+async function abrirRotas() {
+
+    const rotas =
+        await carregarRotasServidor();
+
+    atualizarListaRotas(rotas);
+
+}
+
+async function excluirRota() {
+
+    const rota =
+        obterRotaSelecionada();
+
+    if (!confirm("Excluir rota?"))
+        return;
+
+    await fetch("/rota/excluir", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type":
+                "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            rota: rota
+
+        })
+
+    });
+
+    await abrirRotas();
+
+}
+
+async function mostrarInformacoesRota() {
+
+    const rota =
+        obterRotaSelecionada();
+
+    const resposta =
+        await fetch(
+            "/rota?nome=" + rota
+        );
+
+    const dados =
+        await resposta.json();
+
+    console.log(dados);
 
 }
 

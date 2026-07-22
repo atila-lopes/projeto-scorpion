@@ -303,6 +303,75 @@ def executar_rota():
     return {
         "status": "ok"
     }
+
+@app.route("/rota/renomear", methods=["POST"])
+def renomear_rota():
+
+    dados = request.get_json()
+
+    rota_atual = dados["rota"]
+
+    novo_nome = dados["novo_nome"]
+
+    caminho_antigo = f"../data/rotas/{rota_atual}.json"
+
+    caminho_novo = f"../data/rotas/{novo_nome}.json"
+
+    os.rename(
+        caminho_antigo,
+        caminho_novo
+    )
+
+    print(
+        "Rota renomeada:",
+        rota_atual,
+        "->",
+        novo_nome
+    )
+
+    return {
+        "status": "ok"
+    }
+
+@app.route("/rota/excluir", methods=["POST"])
+def excluir_rota():
+
+    dados = request.get_json()
+
+    nome_rota = dados["rota"]
+
+    caminho = (
+        f"../data/rotas/{nome_rota}.json"
+    )
+
+    os.remove(caminho)
+
+    print(
+        "Rota excluída:",
+        nome_rota
+    )
+
+    return {
+        "status": "ok"
+    }
+
+@app.route("/rota")
+def obter_rota():
+
+    nome_rota = request.args.get("nome")
+
+    caminho = (
+        f"../data/rotas/{nome_rota}.json"
+    )
+
+    with open(
+        caminho,
+        "r",
+        encoding="utf-8"
+    ) as arquivo:
+
+        return json.load(arquivo)
+
 #--------------------------------------
 # Inicialização do servidor
 #--------------------------------------
